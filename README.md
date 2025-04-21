@@ -1,43 +1,77 @@
-# Sports‑Intel (Local‑First MVP)
+# Sports Intel Trading Simulation
 
-End‑to‑end sports betting intelligence platform designed to run entirely on your workstation.
+A system for fetching real sports data from NBA Stats and DraftKings, and running a paper trading simulation.
 
-## Quick Start
+## Setup
 
 ```bash
-# 1.  Install Poetry if you don’t already have it
-curl -sSL https://install.python-poetry.org | python3 -
-
-# 2.  Clone & install deps
+# Install dependencies
+pip install -e .
+# Or with Poetry
 poetry install
+```
 
-# 3.  Launch Supabase local stack (Postgres + web UI)
-#    Requires Docker Desktop running.
-poetry run supabase start
+## Running the Full Pipeline
 
-# 4.  Initialise DB & run Alembic migrations (none yet)
+The `run_all.sh` script automates the entire process:
+
+```bash
+# Run with the current season (2024)
+./run_all.sh
+
+# Run with a specific season
+./run_all.sh 2023
+
+# Run with a specific season and seed N games if no real data is found
+./run_all.sh 2023 10
+
+# Run with a specific season and clear the database first
+./run_all.sh 2023 0 clear
+```
+
+## Verifying Data and Simulation
+
+Use the `check_data_simulation.py` script to verify data ingestion and simulation:
+
+```bash
+# Run full check with current season (2024)
+./check_data_simulation.py
+
+# Run with a specific season
+./check_data_simulation.py --season 2023
+
+# Skip specific checks
+./check_data_simulation.py --skip-nba --skip-odds  # Only run simulation check
+```
+
+## Manual Steps
+
+You can also run the individual components manually:
+
+```bash
+# Initialize the database
 poetry run sports-intel db init
 
-# 5.  Ingest one season of NBA data (backfill)
-poetry run sports-intel ingest nba --season 2023
+# Fetch NBA stats for season 2023
+poetry run sports-intel ingest nba 2023
 
-# 6.  Train baseline model
-poetry run sports-intel train baseline
+# Fetch DraftKings odds for season 2023
+poetry run sports-intel ingest dk-odds 2023
+
+# Run paper trading simulation
+poetry run sports-intel paper-trade season 2023
 ```
 
-## Layout
-```
-sports_intel/
-  core/            # utilities
-  ingest/          # data collectors & loaders
-  db/              # SQLAlchemy engine & models
-  features/        # feature engineering
-  ml/              # modelling
-  simulation/      # Monte Carlo sims
-  betting/         # stake sizing & recommendations
-  paper_trade/     # virtual wallet
-  cli.py           # Typer command‑line entry
-```
+## Troubleshooting
 
-Everything is local‑only: Prefect runs in‑process, Supabase bundles PostgreSQL, and all scripts are executed via the Typer CLI.
-# sports_betting
+If you encounter issues:
+
+1. Check that the database has been initialized: `poetry run sports-intel db init`
+2. Verify NBA data was ingested: Check Game table counts
+3. Verify DraftKings odds were ingested: Check OddsLine table counts
+4. Make sure games have scores (winner_team_id is not null) for simulation to work
+
+## Data Sources
+
+- NBA game data: stats.nba.com
+- Odds data: DraftKings Sportsbook

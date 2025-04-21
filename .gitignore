@@ -1,0 +1,12 @@
+# Byte‑compiled / optimized / DLL files
+__pycache__/
+*.py[co]
+
+# Virtual environments
+.env/
+
+# Poetry
+poetry.lock
+
+# Supabase local generated containers
+.supabase/
