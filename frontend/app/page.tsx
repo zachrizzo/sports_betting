@@ -6,6 +6,8 @@ import { Badge } from "@/components/ui/badge"
 import { Calendar, DollarSign, TrendingUp, Percent } from "lucide-react"
 import { Progress } from "@/components/ui/progress"
 import UserStatsChart from "@/components/user-stats-chart"
+import { ApiStatus } from "@/components/api-status";
+import { UpcomingGames } from "@/components/upcoming-games";
 
 export default function Dashboard() {
   // This would be fetched from your API
@@ -167,6 +169,16 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="md:col-span-1">
+          <ApiStatus />
+        </div>
+        
+        <div className="md:col-span-2">
+          <UpcomingGames />
+        </div>
+      </div>
+
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
         <p className="text-muted-foreground">Welcome back! Here's an overview of your betting activity and insights.</p>

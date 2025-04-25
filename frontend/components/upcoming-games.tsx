@@ -5,12 +5,11 @@ import { gamesApi } from "@/lib/api";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Loader2 } from "lucide-react";
-import Image from "next/image";
 
 interface Game {
   event_id: string;
-  event_name: string;
-  start_date: string;
+  name: string;
+  start: string;
   home_team?: string;
   away_team?: string;
   home_team_abbreviation?: string;
@@ -28,7 +27,9 @@ export function UpcomingGames() {
     const fetchGames = async () => {
       try {
         setLoading(true);
+        console.log("Fetching games from API:", `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/games/upcoming`);
         const data = await gamesApi.getUpcomingGames();
+        console.log("API Response:", data);
         setGames(data);
         setError(null);
       } catch (err) {
@@ -52,7 +53,7 @@ export function UpcomingGames() {
         hour: 'numeric',
         minute: '2-digit',
       }).format(date);
-    } catch (e) {
+    } catch (_) {
       return dateStr;
     }
   };
@@ -86,8 +87,8 @@ export function UpcomingGames() {
                 <div className="p-4">
                   <div className="flex justify-between items-center">
                     <div>
-                      <p className="text-sm font-medium">{game.event_name || "NBA Game"}</p>
-                      <p className="text-xs text-muted-foreground">{formatDate(game.start_date)}</p>
+                      <p className="text-sm font-medium">{game.name || "NBA Game"}</p>
+                      <p className="text-xs text-muted-foreground">{formatDate(game.start)}</p>
                     </div>
                     <div>
                       <p className="text-sm font-medium text-muted-foreground">
